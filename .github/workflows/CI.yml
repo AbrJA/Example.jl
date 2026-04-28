@@ -4,6 +4,9 @@ on:
     branches: [main, master]
     tags: ["*"]
   pull_request:
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -13,7 +16,7 @@ jobs:
       matrix:
         version:
           - '1' # automatically expands to the latest stable 1.x release of Julia
-          - 'min'
+          - 'lts'
           - 'pre'
         os:
           - ubuntu-latest
@@ -41,8 +44,10 @@ jobs:
   docs:
     name: Documentation
     runs-on: ubuntu-latest
+    permissions:
+        contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: julia-actions/julia-buildpkg@latest
       - uses: julia-actions/julia-docdeploy@latest
         env:
